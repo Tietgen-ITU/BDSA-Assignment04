@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assignment4.Core\Assignment4.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assignment4.Core\Assignment4.Core.csproj" />
+    <ProjectReference Include="..\Assignment4.Entities\Assignment4.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
