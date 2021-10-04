@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Assignment4.Core;
 using System.Collections.Generic;
+
 namespace Assignment4.Entities
 {
     public class Task
