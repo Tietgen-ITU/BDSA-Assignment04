@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using Assignment4.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using System.Collections.Generic;
 
 namespace Assignment4.Entities.Tests
 
@@ -45,12 +46,12 @@ namespace Assignment4.Entities.Tests
         }
 
         [Fact]
-        public void TestAll()
+        public void ReadAll_ReturnsCountOf3()
         {
             int expectedCount = 3;
 
             //When
-            int resultCount = _repository.All().Count;
+            int resultCount = _repository.ReadAll().Count;
 
             //Then
             Assert.Equal(expectedCount,resultCount);
@@ -66,7 +67,7 @@ namespace Assignment4.Entities.Tests
 
             //When
             _repository.Delete(3);
-            bool doesStillExist = _repository.All().Any(x => x.Id == 3);
+            bool doesStillExist = _repository.ReadAll().Any(x => x.Id == 3);
 
             //Then
             Assert.False(doesStillExist);
@@ -75,23 +76,19 @@ namespace Assignment4.Entities.Tests
         [Fact]
         public void Find_task_by_id_returns_TaskDTO()
         {
-            TaskDTO task = new TaskDTO
-            {
-                Id = 2,
 
-            };
+            var expected = new TaskDetailsDTO(2, 
+                                            "Remove stuff", 
+                                            "The task of removing stuff", 
+                                            DateTime.Now, 
+                                            "Arne", 
+                                            new List<string>(), 
+                                            State.Active, 
+                                            DateTime.Now);
 
-            var expected = new TaskDetailsDTO { Id = 2, Title = "Remove stuff", Description = "The task of removing stuff", State = State.Active, AssignedToEmail = "snabela@snabela.com", AssignedToName = "Arne", AssignedToId = 1 };
-            TaskDetailsDTO result = _repository.FindById(2);
+            TaskDetailsDTO result = _repository.Read(2);
 
             Assert.Equal(expected, result);
-
-
-
-
-
-
-
         }
 
 
@@ -101,35 +98,38 @@ namespace Assignment4.Entities.Tests
         [Fact]
         public void Create_returns_id_of_generated_task()
         {
-            TaskDTO task = new TaskDTO
+            var task = new TaskCreateDTO
             {
                 Title = "Eat something",
-                Description = "The task of eating something",
-                State = State.New,
-                Tags = new Collection<string>{},
+                Description = "Assignment 4 holdet er cool",
+                AssignedToId = 1,
+                Tags = new List<string>{},
             };
 
-            int actual = _repository.Create(task);
+            var actual = _repository.Create(task);
             
 
-            Assert.Equal(4, actual);
+            Assert.Equal(4, actual.TaskId);
+            Assert.Equal(Response.Created, actual.Response);
         }
 
         [Fact]
         public void Update_given_existing_task_updates_task()
         {
-            TaskDTO task = new TaskDTO
+            var task = new TaskUpdateDTO
             {
                 Id = 1,
                 Title = "Add updated stuff",
+                AssignedToId = 2,
                 Description = "The task of adding updated stuff",
                 State = State.Active,
-                Tags = new Collection<string>()
+                Tags = new List<string>()
             };
 
             _repository.Update(task);
 
-            var updatedTask = _repository.FindById(1);
+            var updatedTask = _repository.Read(1);
+
             Assert.Equal(1, updatedTask.Id);
             Assert.Equal("Add updated stuff", updatedTask.Title);
             Assert.Equal("The task of adding updated stuff", updatedTask.Description);
