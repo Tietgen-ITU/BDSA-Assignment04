@@ -91,10 +91,6 @@ namespace Assignment4.Entities.Tests
             Assert.Equal(expected, result);
         }
 
-
-
-
-
         [Fact]
         public void Create_returns_id_of_generated_task()
         {
@@ -135,13 +131,5 @@ namespace Assignment4.Entities.Tests
             Assert.Equal("The task of adding updated stuff", updatedTask.Description);
             Assert.Equal(State.Active, updatedTask.State);
         }
-
-
-
-
-
-
-
-
     }
 }
