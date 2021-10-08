@@ -30,16 +30,19 @@ namespace Assignment4.Entities
         {
             User user = _dbContext.Users.SingleOrDefault(u => u.Id == task.AssignedToId.GetValueOrDefault());
 
-            _dbContext.Tasks.Add(new Task
+            var newTask = new Task
             {
                 Title = task.Title,
                 AssignedTo = user,
                 Description = task.Description,
                 State = task.State,
                 Tags = _dbContext.Tags.Where(x => task.Tags.Contains(x.Name)).ToList()
-            });
+            };
 
-            return _dbContext.SaveChanges();
+            _dbContext.Tasks.Add(newTask);
+            _dbContext.SaveChanges();
+
+            return newTask.Id;
         }
 
         public void Delete(int taskId)
@@ -67,10 +70,10 @@ namespace Assignment4.Entities
                 Id = task.Id,
                 Title = task.Title,
                 Description = task.Description,
-                AssignedToId = task.AssignedTo.Id,
-                AssignedToName = task.AssignedTo.Name,
-                AssignedToEmail = task.AssignedTo.Email,
-                Tags = task.Tags.Select(tag => tag.Name),
+                AssignedToId = task.AssignedTo?.Id,
+                AssignedToName = task.AssignedTo?.Name,
+                AssignedToEmail = task.AssignedTo?.Email,
+                Tags = task.Tags?.Select(tag => tag.Name),
                 State = task.State
             };
         }
