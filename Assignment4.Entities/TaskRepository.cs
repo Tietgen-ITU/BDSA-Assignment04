@@ -35,7 +35,9 @@ namespace Assignment4.Entities
                 AssignedTo = user,
                 Description = task.Description,
                 State = State.New,
-                Tags = _dbContext.Tags.Where(x => task.Tags.Contains(x.Name)).ToList()
+                Tags = _dbContext.Tags.Where(x => task.Tags.Contains(x.Name)).ToList(),
+                Created = DateTime.UtcNow,
+                StateUpdated = DateTime.UtcNow
             };
 
             _dbContext.Tasks.Add(newTask);
@@ -107,6 +109,7 @@ namespace Assignment4.Entities
             dbTask.AssignedTo = dbUser;
             dbTask.State = task.State;
             dbTask.Tags = _dbContext.Tags.Where(x => task.Tags.Contains(x.Name)).ToList();
+            dbTask.StateUpdated = DateTime.UtcNow;
 
             _dbContext.SaveChanges();
 
