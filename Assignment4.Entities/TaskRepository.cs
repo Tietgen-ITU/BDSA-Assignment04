@@ -61,11 +61,11 @@ namespace Assignment4.Entities
             return new TaskDetailsDTO(task.Id, 
                                         task.Title, 
                                         task.Description,
-                                        DateTime.MinValue,
+                                        task.Created,
                                         task.AssignedTo?.Name,
                                         task.Tags?.Select(x => x.Name).ToList(),
                                         task.State,
-                                        DateTime.MinValue);
+                                        task.StateUpdated);
             
         }
 
