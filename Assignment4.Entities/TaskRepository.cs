@@ -99,17 +99,23 @@ namespace Assignment4.Entities
 
         public Response Update(TaskUpdateDTO task)
         {
-            Task dbTask = _dbContext.Tasks.Single(x => x.Id == task.Id);
+            Task dbTask = _dbContext.Tasks.SingleOrDefault(x => x.Id == task.Id);
             User dbUser = _dbContext.Users.SingleOrDefault(x => x.Id == task.AssignedToId.GetValueOrDefault());
+            
+            if(dbTask == null)
+                return Response.NotFound;
+
+            if(dbUser == null)
+                return Response.BadRequest;
 
             // Update values...
             dbTask.Id = task.Id;
             dbTask.Title = task.Title;
             dbTask.Description = task.Description;
             dbTask.AssignedTo = dbUser;
-            dbTask.State = task.State;
             dbTask.Tags = _dbContext.Tags.Where(x => task.Tags.Contains(x.Name)).ToList();
-            dbTask.StateUpdated = DateTime.UtcNow;
+            dbTask.StateUpdated = dbTask.State != task.State ? DateTime.UtcNow : dbTask.StateUpdated;
+            dbTask.State = task.State;
 
             _dbContext.SaveChanges();
 
@@ -118,7 +124,10 @@ namespace Assignment4.Entities
 
         public Response Delete(int taskId)
         {
-            Task task = _dbContext.Tasks.Single(t => t.Id == taskId);
+            Task task = _dbContext.Tasks.SingleOrDefault(t => t.Id == taskId);
+
+            if(task == null)
+                return Response.NotFound;
             
             switch (task.State)
             {

@@ -5,7 +5,6 @@ using Assignment4.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-using System.Collections.Generic;
 
 namespace Assignment4.Entities.Tests
 
