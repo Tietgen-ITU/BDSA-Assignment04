@@ -22,8 +22,10 @@ namespace Assignment4.Entities
 
         public ICollection<Tag> Tags { get; set; }
 
+        [Required]
         public DateTime Created { get; set; }
-
+        
+        [Required]
         public DateTime StateUpdated { get; set; }
     }
 }
