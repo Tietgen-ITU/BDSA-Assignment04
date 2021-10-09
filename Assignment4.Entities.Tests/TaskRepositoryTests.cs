@@ -30,9 +30,9 @@ namespace Assignment4.Entities.Tests
             var Arne = new User { Id = 1, Name = "Arne", Email = "snabela@snabela.com" };
             var Anton = new User { Id = 2, Name = "Antonius", Email = "snabela@crushader.net" };
 
-            var taskAdd = new Task { Id = 1, Title = "Add stuff", Description = "The task of adding stuff", State = State.New, AssignedTo = Arne };
-            var taskRemove = new Task { Id = 2, Title = "Remove stuff", Description = "The task of removing stuff", State = State.Active, AssignedTo = Arne };
-            var taskChange = new Task { Id = 3, Title = "Change stuff", Description = "The task of changing stuff", State = State.Resolved, AssignedTo = Anton };
+            var taskAdd = new Task { Id = 1, Title = "Add stuff", Description = "The task of adding stuff", Tags = new List<Tag>(), State = State.New, AssignedTo = Arne, Created = DateTime.UtcNow, StateUpdated = DateTime.UtcNow };
+            var taskRemove = new Task { Id = 2, Title = "Remove stuff", Description = "The task of removing stuff", Tags = new List<Tag>(), State = State.Active, AssignedTo = Arne, Created = DateTime.UtcNow, StateUpdated = DateTime.UtcNow };
+            var taskChange = new Task { Id = 3, Title = "Change stuff", Description = "The task of changing stuff", Tags = new List<Tag>(), State = State.Resolved, AssignedTo = Anton, Created = DateTime.UtcNow, StateUpdated = DateTime.UtcNow };
 
             context.Tasks.AddRange(
                taskAdd,
@@ -80,15 +80,15 @@ namespace Assignment4.Entities.Tests
             var expected = new TaskDetailsDTO(2, 
                                             "Remove stuff", 
                                             "The task of removing stuff", 
-                                            DateTime.Now, 
+                                            DateTime.UtcNow, 
                                             "Arne", 
                                             new List<string>(), 
                                             State.Active, 
-                                            DateTime.Now);
+                                            DateTime.UtcNow);
 
             TaskDetailsDTO result = _repository.Read(2);
 
-            Assert.Equal(expected, result);
+            AssertEqualTaskDetailsDTO(expected, result);
         }
 
         [Fact]
@@ -130,6 +130,24 @@ namespace Assignment4.Entities.Tests
             Assert.Equal("Add updated stuff", updatedTask.Title);
             Assert.Equal("The task of adding updated stuff", updatedTask.Description);
             Assert.Equal(State.Active, updatedTask.State);
+        }
+
+        private void AssertEqualTaskDTO(TaskDTO expected, TaskDTO actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Title, actual.Title);
+            Assert.Equal(expected.AssignedToName, actual.AssignedToName);
+            Assert.Equal(expected.State, actual.State);
+            Assert.Equal(expected.Tags, actual.Tags);
+        }
+
+        private void AssertEqualTaskDetailsDTO(TaskDetailsDTO exp, TaskDetailsDTO actual)
+        {
+            AssertEqualTaskDTO(exp, actual);
+
+            Assert.Equal(exp.Description, actual.Description);
+            Assert.Equal(exp.Created, actual.Created, precision: TimeSpan.FromSeconds(1));
+            Assert.Equal(exp.StateUpdated, actual.StateUpdated, precision: TimeSpan.FromSeconds(1));
         }
     }
 }
