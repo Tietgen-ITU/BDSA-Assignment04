@@ -60,17 +60,34 @@ namespace Assignment4.Entities.Tests
         [Fact]
         public void Delete_task_by_id()
         {
-            Task task = new Task
-            {
-                Id = 3,
-            };
-
             //When
-            _repository.Delete(3);
-            bool doesStillExist = _repository.ReadAll().Any(x => x.Id == 3);
+            Response result = _repository.Delete(1);
+            bool doesStillExist = _repository.ReadAll().Any(x => x.Id == 1);
 
             //Then
             Assert.False(doesStillExist);
+            Assert.Equal(Response.Deleted, result);
+        }
+
+        [Fact]
+        public void Delete_TaskWithStateResolved_ReturnsConflictLeaving()
+        {
+            var expected = new TaskDetailsDTO(3, 
+                                            "Change stuff", 
+                                            "The task of changing stuff", 
+                                            DateTime.UtcNow, 
+                                            "Antonius", 
+                                            new List<string>(), 
+                                            State.Resolved, 
+                                            DateTime.UtcNow);
+
+            //When
+            Response result = _repository.Delete(3);
+            var resultTask = _repository.Read(3);
+
+            //Then
+            Assert.Equal(Response.Conflict, result);
+            AssertEqualTaskDetailsDTO(expected, resultTask);
         }
 
         [Fact]

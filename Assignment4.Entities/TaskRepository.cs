@@ -119,10 +119,29 @@ namespace Assignment4.Entities
         public Response Delete(int taskId)
         {
             Task task = _dbContext.Tasks.Single(t => t.Id == taskId);
-            _dbContext.Tasks.Remove(task);
+            
+            switch (task.State)
+            {
+                case State.New:
+                    _dbContext.Tasks.Remove(task);
+                    _dbContext.SaveChanges();
+                    return Response.Deleted;
+                    break;
+                case State.Active:
+                    var response = Update(new TaskUpdateDTO{
+                        Id = task.Id,
+                        Title = task.Title,
+                        AssignedToId = task.AssignedTo?.Id,
+                        Description = task.Description,
+                        Tags = task.Tags.Select(x => x.Name).ToList(),
+                        State = State.Removed
+                    });
 
-            _dbContext.SaveChanges();
-            return Response.Deleted;
+                    return response != Response.Updated ? Response.BadRequest : Response.Deleted;
+                    break;
+                default:
+                    return Response.Conflict;
+            }
         }
 
         private TaskDTO ConvertToTaskDTO(Task task)
