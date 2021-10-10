@@ -6,8 +6,6 @@ namespace Assignment4.Entities
 {
     public class TagRepository : ITagRepository
     {
-
-
         private readonly KanbanContext _dbContext;
 
         public TagRepository(KanbanContext context)
@@ -76,7 +74,7 @@ namespace Assignment4.Entities
             {
                 return Response.NotFound;
             }
-            else if ((tag.Tasks.Count > 0 && force) || tag.Tasks.Count == 0) //Tags which are assigned to a task may only be deleted using the force.
+            else if (tag.Tasks == null || force) //Tags which are assigned to a task may only be deleted using the force.
             {
                 _dbContext.Tags.Remove(tag);
                 _dbContext.SaveChanges();
