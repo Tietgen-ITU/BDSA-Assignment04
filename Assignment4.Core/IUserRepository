@@ -1,0 +1,11 @@
+  using System;
+  using System.Collections.Generic;
+  namespace Assignment4.Core{
+
+  public interface IUserRepository : IDisposable
+    {
+        (Response Response, int UserId) Create(UserCreateDTO task);
+        Response Update(TaskUpdateDTO task);
+        Response Delete(int taskId);
+    }
+}
